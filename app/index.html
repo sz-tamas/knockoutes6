@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>KnockoutES6: Proof of Concept</title>
+
+    <script src="js/lib/libs.min.js"></script>
+    <script>
+        System.config({
+            packages: {
+                js: {
+                    format: 'register',
+                    defaultExtension: 'js'
+                }
+            }
+        });
+
+        System.import('js/boot')
+                .then(null, console.error.bind(console));
+    </script>
+</head>
+
+<body>
+
+<my-app>Loading...</my-app>
+
+</body>
+</html>
