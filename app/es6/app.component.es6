@@ -7,6 +7,10 @@ import {Component} from './knockout/component.es6';
 })
 export class AppViewModel {
     constructor() {
-        this.name = 'Knockout ES';
+        this.name = 'Knockout ES6';
+    }
+
+    OnClick() {
+        console.log('clicked');
     }
 }
