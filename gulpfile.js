@@ -2,6 +2,7 @@ const gulp = require('gulp'),
     $ = require('gulp-load-plugins')(),
     browserify = require('browserify'),
     babelify = require('babelify'),
+    stringify = require('stringify'),
     buffer = require('vinyl-buffer'),
     source = require('vinyl-source-stream'),
     runSequence = require('run-sequence'),
@@ -13,18 +14,13 @@ const app = {
 };
 
 const paths = {
-    styles: 'css/**/*.css',
-    scripts: 'es6/**/*.es6',
+    styles: '**/*.css',
+    scripts: '**/*.js',
     views: {
         main: 'index.html',
         templates: 'view/**/*.html'
     }
 };
-
-gulp.task('html', function() {
-    gulp.src(app.src + paths.views.main)
-        .pipe(gulp.dest(app.build));
-});
 
 gulp.task('css', function() {
     gulp.src(app.src + paths.styles)
@@ -45,22 +41,16 @@ gulp.task('copy:libs', function() {
         .pipe(gulp.dest(app.build + 'js/lib'));
 });
 
-// gulp.task('ecmascript6', function () {
-    // return gulp.src(es6Src + '**/*.es6')
-    //     .pipe($.sourcemaps.init())
-    //     .pipe($.babel(babelrc))
-    //     .pipe($.sourcemaps.write('.'))
-    //     .pipe(gulp.dest(app.build + 'js/'));
-// });
-
-// http://stackoverflow.com/questions/31593694/do-i-need-require-js-when-i-use-babel
-gulp.task('ecmascript6', function () {
-    browserify(app.src + '/es6/boot.es6', { debug: true })
+gulp.task('js', function () {
+    browserify(app.src + '/main.js', { debug: true })
         .add(require.resolve('babel-polyfill'))
         .transform(babelify)
+        .transform(stringify, {
+            appliesTo: { includeExtendsions: ['.html']}
+        })
         .bundle()
         .on('error', $.util.log.bind($.util, 'Browserify Error'))
-        .pipe(source('boot.js'))
+        .pipe(source('app.js'))
         .pipe(buffer())
         .pipe($.sourcemaps.init({loadMaps: true}))
         .pipe($.uglify({ mangle: false }))
@@ -69,7 +59,7 @@ gulp.task('ecmascript6', function () {
 });
 
 gulp.task('watch', function() {
-    gulp.watch(app.src + paths.scripts, ['ecmascript6']);
+    gulp.watch(app.src + paths.scripts, ['js']);
     gulp.watch(app.src + paths.styles, ['css']);
     gulp.watch([app.src + paths.views.main, app.src + paths.views.templates], ['html']);
 });
@@ -88,7 +78,7 @@ gulp.task('clean:build', function(cb) {
 });
 
 gulp.task('build', function() {
-    runSequence(['copy:libs', 'ecmascript6', 'css', 'html', 'watch', 'webserver']);
+    runSequence(['copy:libs', 'js', 'css', 'watch', 'webserver']);
 });
 
 gulp.task('default', ['build']);
