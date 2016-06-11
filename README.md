@@ -19,12 +19,12 @@ ko.components.register('my-app', {
 After:
 
 ```javascript
-import {Component} from './knockout/component.es6';
+import {Component} from '../../module/knockout/component.js';
+import Template from './app.html';
+
 @Component({
     name: 'my-app',
-    template: `<h1>
-        My first <span data-bind="text: name"></span> App
-    </h1>`
+    template: Template
 })
 export class AppViewModel {
     constructor() {
@@ -52,10 +52,6 @@ gulp
 ```
 
 # What's next
-
-## Template
-
-For the proof of concept i added template as a string, but it would be better to add it as a path to a template. To do that the component decorator should get some improvements.
 
 ## KnockoutES5
 
